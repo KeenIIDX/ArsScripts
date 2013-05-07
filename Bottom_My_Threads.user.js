@@ -17,7 +17,7 @@ function with_jquery(f) {
 };
 
 with_jquery(function($) {
-link=' <a href="http://arstechnica.com/civis/search.php?search_id=egosearch">My Threads</a>'
+link='&nbsp;<a href="./search.php?search_id=egosearch">My Threads</a>'
 $('.bookmark').append(link)
 });
 
