@@ -1,0 +1,24 @@
+// ==UserScript==
+// @name           Bottom My Threads Link
+// @namespace      KeenIIDX
+// @description    Adds 'My Threads' Link to the bottom of forum pages
+// @include        http://arstechnica.com/civis/*
+// @author         Elliott Wilcoxon
+// @require        http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.js
+// @grant          none
+
+// ==/UserScript==
+
+function with_jquery(f) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.textContent = "(" + f.toString() + ")(jQuery)";
+    document.body.appendChild(script);
+};
+
+with_jquery(function($) {
+link=' <a href="http://arstechnica.com/civis/search.php?search_id=egosearch">My Threads</a>'
+$('.bookmark').append(link)
+});
+
+
