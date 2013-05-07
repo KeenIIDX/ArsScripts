@@ -17,8 +17,8 @@ function with_jquery(f) {
 };
 
 with_jquery(function($) {
-link='&nbsp;<a href="./search.php?search_id=egosearch">My Threads</a>'
-$('.bookmark').append(link)
+link='<div><a href="./search.php?search_id=egosearch">My Threads</a></div>'
+$('.subscribe-actions').append(link)
 });
 
 
