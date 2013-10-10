@@ -17,6 +17,6 @@ function with_jquery(f) {
 };
 
 with_jquery(function($) {
-link='<div style="float: left; margin-right: 1em; background: url(http://cdn.arstechnica.net/civis/ars/theme/images/user-icons-sprite.png) no-repeat scroll left -600px transparent;"><a href="./search.php?search_id=egosearch">My Threads</a></div>'
+link='<div style="float: left; margin-right: 1em; background: url(http://cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png) no-repeat scroll transparent;"><a href="./search.php?search_id=egosearch">My Threads</a></div>'
 $('.subscribe-actions').append(link)
 });
