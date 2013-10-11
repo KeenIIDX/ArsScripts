@@ -42,11 +42,11 @@ with_jquery(function($) {
 	imgNormalUnread.setAttribute("title", "Unread posts");
 
 	var imgPostedRead = document.createElement('img');
-	imgPostedRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png");
+	imgPostedRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_read_mine.png");
 	imgPostedRead.setAttribute("width", "17");
 	imgPostedRead.setAttribute("height", "17");
-	imgPostedRead.setAttribute("alt", "Unread posts");
-	imgPostedRead.setAttribute("title", "Unread posts");
+	imgPostedRead.setAttribute("alt", "No unread posts");
+	imgPostedRead.setAttribute("title", "No unread posts");
 	
 	var imgPostedUnread = document.createElement('img');
 	imgPostedUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png");
@@ -69,7 +69,21 @@ with_jquery(function($) {
 	imgLockedUnread.setAttribute("alt", "Unread posts");
 	imgLockedUnread.setAttribute("title", "Unread posts");
 
-	// TODO: Add Stickies.
+	var imgStickyRead = document.createElement('img');
+	imgStickyRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/sticky_read_mine.png");
+	imgStickyRead.setAttribute("width", "17");
+	imgStickyRead.setAttribute("height", "17");
+	imgStickyRead.setAttribute("alt", "No unread posts");
+	imgStickyRead.setAttribute("title", "No unread posts");
+
+	var imgStickyUnread = document.createElement('img');
+	imgStickyUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/sticky_unread_mine.png");
+	imgStickyUnread.setAttribute("width", "17");
+	imgStickyUnread.setAttribute("height", "17");
+	imgStickyUnread.setAttribute("alt", "Unread posts");
+	imgStickyUnread.setAttribute("title", "Unread posts");
+
+
 	/* We have two posting states, posted in and unposted in.  Then we have two read states, read and unread.  On top of that, we have 3 types of threads: normal, stickies, and locked.
 	*/
 
