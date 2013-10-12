@@ -2,7 +2,7 @@
 // @name           Unparticipate in Threads
 // @namespace      KeenIIDX
 // @description    Whitelist/Blacklist posted-in threads to behave like you haven't posted in them.
-// @include        http://arstechnica.com/civis/viewforum.php*
+// @include        http://arstechnica.com/civis/*
 // @author         Elliott Wilcoxon
 // @grant          none
 
@@ -85,6 +85,53 @@ with_jquery(function($) {
 
 
 	/* We have two posting states, posted in and unposted in.  Then we have two read states, read and unread.  On top of that, we have 3 types of threads: normal, stickies, and locked.
+	
+	
+	URL formats:
+	Forum homepage:
+	http://arstechnica.com/civis/index.php
+	
+	Forum group:
+	http://arstechnica.com/civis/viewforum.php?f=1
+	
+	Forum:
+	http://arstechnica.com/civis/viewforum.php?f=3
+	
+	Thread:
+	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141
+	
+	Specific post in a thread:
+	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141&p=25464013#p25464013
+	
+	First unread post:
+	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141&view=unread#unread
 	*/
+	
+	if (document.URL.indexOf("viewforum") !== -1) {
+	// We're looking at a forum or forum group.
+	}
+	
+	if (document.URL.indexOf("viewtopic") !== -1) {
+	// We're in a thread.
+	
+		var toggleButton = document.createElement('div');
+		var toggleLink = document.createElement('a');
 
+		$(toggleLink).attr('href', 'javascript:void(0);')
+					.html('Toggle posted-in')
+					.css({		display: 'block',
+								'padding-left': '21px',
+								background: 'url(http://cdn.arstechnica.net/civis/ars//imageset/en/_mark_read.png) no-repeat scroll left top transparent'
+						});
+
+		// TODO add event handler
+						
+		$(toggleButton).append(toggleLink)
+						.addClass('toggle')
+						.css({	float: 'left',
+								'margin-right': '1em',
+							});
+
+		$('.subscribe-actions').append(toggleButton);
+	}
 });
