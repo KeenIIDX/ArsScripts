@@ -48,7 +48,7 @@ with_jquery(function($) {
 	}
 
 	function toggleThread (fullLink) {
-		var thread = /t=(\d+)/.exec(fullLink)[1];
+		var thread = /f=\d+&t=\d+/.exec(fullLink)[0];
 		var threadIndex = threads.indexOf(thread);
 		
 		if (threadIndex === -1) {
@@ -68,9 +68,9 @@ with_jquery(function($) {
 		// Build selector that matches all the toggled threads.
 		var threadsSelector = "";
 		threads.forEach( function (item) {
-			threadsSelector += 'a[href*="t=' + item + '&"]>img,';
+			threadsSelector += 'a[href*="' + item + '&"]>img,';
 		});
-		threadsSelector.slice(0,-1);
+		threadsSelector = threadsSelector.slice(0,-1);
 		
 		// Grab list of threads.  For each of the ones in threads, toggle the icon type.
 		$(threadsSelector).each(function () {
