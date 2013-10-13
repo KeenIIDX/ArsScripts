@@ -4,6 +4,7 @@
 // @description    Whitelist/Blacklist posted-in threads to behave like you haven't posted in them.
 // @include        http://arstechnica.com/civis/*
 // @author         Elliott Wilcoxon
+// @require        http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.js
 // @grant          none
 
 // ==/UserScript==
@@ -17,6 +18,8 @@ function with_jquery(f) {
 
 with_jquery(function($) {
 	var prefix = "participatedThreads";
+	var threads = "uninitialized";
+	
 	function setStorage (key, value) {
 		localStorage.setItem(prefix + key, JSON.stringify(value));
 	}
@@ -27,88 +30,68 @@ with_jquery(function($) {
 		localStorage.removeItem(prefix + key);
 	}
 
-	var imgNormalRead = document.createElement('img');
-	imgNormalRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_read.png");
-	imgNormalRead.setAttribute("width", "17");
-	imgNormalRead.setAttribute("height", "17");
-	imgNormalRead.setAttribute("alt", "No unread posts");
-	imgNormalRead.setAttribute("title", "No unread posts");
+	var imgNormalReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_read.png";
+	var imgNormalUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_unread.png";
+	var imgNormalReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_read_mine.png";
+	var imgNormalUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png";
+	var imgStickyReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_read_mine.png";
+	var imgStickyUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread_mine.png";
+	var imgStickyReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_read.png";
+	var imgStickyUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread.png";
 
-	var imgNormalUnread = document.createElement('img');
-	imgNormalUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_unread.png");
-	imgNormalUnread.setAttribute("width", "17");
-	imgNormalUnread.setAttribute("height", "17");
-	imgNormalUnread.setAttribute("alt", "Unread posts");
-	imgNormalUnread.setAttribute("title", "Unread posts");
+	function syncThreads () {
+		if (Array.isArray(threads)) {
+			setStorage("threads", threads);
+		} else {
+			threads = getStorage("threads") || [];
+		}
+	}
 
-	var imgPostedRead = document.createElement('img');
-	imgPostedRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_read_mine.png");
-	imgPostedRead.setAttribute("width", "17");
-	imgPostedRead.setAttribute("height", "17");
-	imgPostedRead.setAttribute("alt", "No unread posts");
-	imgPostedRead.setAttribute("title", "No unread posts");
-	
-	var imgPostedUnread = document.createElement('img');
-	imgPostedUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png");
-	imgPostedUnread.setAttribute("width", "17");
-	imgPostedUnread.setAttribute("height", "17");
-	imgPostedUnread.setAttribute("alt", "Unread posts");
-	imgPostedUnread.setAttribute("title", "Unread posts");
-	
-	var imgLockedRead = document.createElement('img');
-	imgLockedRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_locked.png");
-	imgLockedRead.setAttribute("width", "17");
-	imgLockedRead.setAttribute("height", "17");
-	imgLockedRead.setAttribute("alt", "This topic is locked, you cannot edit posts or make further replies.");
-	imgLockedRead.setAttribute("title", "This topic is locked, you cannot edit posts or make further replies.");
+	function toggleThread (fullLink) {
+		var thread = /t=(\d+)/.exec(fullLink)[1];
+		var threadIndex = threads.indexOf(thread);
+		
+		if (threadIndex === -1) {
+			threads.push(thread);
+		} else {
+			threads.splice(threadIndex, 1);
+		}
+		
+		syncThreads();
+	}
 
-	var imgLockedUnread = document.createElement('img');
-	imgLockedUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/topic_locked.png");
-	imgLockedUnread.setAttribute("width", "17");
-	imgLockedUnread.setAttribute("height", "17");
-	imgLockedUnread.setAttribute("alt", "Unread posts");
-	imgLockedUnread.setAttribute("title", "Unread posts");
-
-	var imgStickyRead = document.createElement('img');
-	imgStickyRead.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/sticky_read_mine.png");
-	imgStickyRead.setAttribute("width", "17");
-	imgStickyRead.setAttribute("height", "17");
-	imgStickyRead.setAttribute("alt", "No unread posts");
-	imgStickyRead.setAttribute("title", "No unread posts");
-
-	var imgStickyUnread = document.createElement('img');
-	imgStickyUnread.setAttribute("src", "//cdn.arstechnica.net/civis/ars/imageset/sticky_unread_mine.png");
-	imgStickyUnread.setAttribute("width", "17");
-	imgStickyUnread.setAttribute("height", "17");
-	imgStickyUnread.setAttribute("alt", "Unread posts");
-	imgStickyUnread.setAttribute("title", "Unread posts");
-
-
-	/* We have two posting states, posted in and unposted in.  Then we have two read states, read and unread.  On top of that, we have 3 types of threads: normal, stickies, and locked.
-	
-	
-	URL formats:
-	Forum homepage:
-	http://arstechnica.com/civis/index.php
-	
-	Forum group:
-	http://arstechnica.com/civis/viewforum.php?f=1
-	
-	Forum:
-	http://arstechnica.com/civis/viewforum.php?f=3
-	
-	Thread:
-	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141
-	
-	Specific post in a thread:
-	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141&p=25464013#p25464013
-	
-	First unread post:
-	http://arstechnica.com/civis/viewtopic.php?f=3&t=1108141&view=unread#unread
-	*/
+	syncThreads();
 	
 	if (document.URL.indexOf("viewforum") !== -1) {
 	// We're looking at a forum or forum group.
+		
+		// Build selector that matches all the toggled threads.
+		var threadsSelector = "";
+		threads.forEach( function (item) {
+			threadsSelector += 'a[href*="t=' + item + '&"]>img,';
+		});
+		threadsSelector.slice(0,-1);
+		
+		// Grab list of threads.  For each of the ones in threads, toggle the icon type.
+		$(threadsSelector).each(function () {
+			if (this.src === imgNormalReadUnposted) {
+				this.src = imgNormalReadPosted;
+			} else if (this.src === imgNormalReadPosted) {
+				this.src = imgNormalReadUnposted;
+			} else if (this.src === imgNormalUnreadUnposted) {
+				this.src = imgNormalUnreadPosted;
+			} else if (this.src === imgNormalUnreadPosted) {
+				this.src = imgNormalUnreadUnposted;
+			} else if (this.src === imgStickyReadPosted) {
+				this.src = imgStickyReadUnposted;
+			} else if (this.src === imgStickyReadUnposted) {
+				this.src = imgStickyReadPosted;
+			} else if (this.src === imgStickyUnreadPosted) {
+				this.src = imgStickyUnreadUnposted;
+			} else if (this.src === imgStickyUnreadUnposted) {
+				this.src = imgStickyUnreadPosted;
+			}
+		});
 	}
 	
 	if (document.URL.indexOf("viewtopic") !== -1) {
@@ -118,19 +101,18 @@ with_jquery(function($) {
 		var toggleLink = document.createElement('a');
 
 		$(toggleLink).attr('href', 'javascript:void(0);')
-					.html('Toggle posted-in')
-					.css({		display: 'block',
-								'padding-left': '21px',
-								background: 'url(http://cdn.arstechnica.net/civis/ars//imageset/en/_mark_read.png) no-repeat scroll left top transparent'
-						});
-
-		// TODO add event handler
-						
+			.html('Toggle posted-in')
+			.css({	display: 'block',
+					'padding-left': '21px',
+					background: 'url(http://cdn.arstechnica.net/civis/ars/imageset/en/_mark_read.png) no-repeat scroll left top transparent'
+		});
+		
 		$(toggleButton).append(toggleLink)
-						.addClass('toggle')
-						.css({	float: 'left',
-								'margin-right': '1em',
-							});
+			.addClass('toggle')
+			.css({	float: 'left',
+					'margin-right': '1em'
+			})
+			.click(toggleThread(document.URL));
 
 		$('.subscribe-actions').append(toggleButton);
 	}
