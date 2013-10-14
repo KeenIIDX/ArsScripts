@@ -112,7 +112,7 @@ with_jquery(function($) {
 			.css({	float: 'left',
 					'margin-right': '1em'
 			})
-			.click(toggleThread(document.URL));
+			.click(function () {toggleThread(document.URL)});
 
 		$('.subscribe-actions').append(toggleButton);
 	}
