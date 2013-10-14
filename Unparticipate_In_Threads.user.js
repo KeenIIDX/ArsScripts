@@ -94,6 +94,30 @@ with_jquery(function($) {
 		});
 	}
 	
+	if (document.URL.indexOf("egosearch") !== -1) {
+	// We're in My Threads.
+	
+		// Build selector that matches all the toggled threads.
+		var threadsSelector = "";
+		threads.forEach( function (item) {
+			threadsSelector += 'a[href*="' + item + '&"]>img,';
+		});
+		threadsSelector = threadsSelector.slice(0,-1);
+		
+		// Grab list of threads.  For each of the ones that should be shown as unposted, hide.
+		$(threadsSelector).each(function () {
+			if (this.src === imgNormalReadPosted) {
+				$(this).parents('tr').remove();
+			} else if (this.src === imgNormalUnreadPosted) {
+				$(this).parents('tr').remove();
+			} else if (this.src === imgStickyReadPosted) {
+				$(this).parents('tr').remove();
+			} else if (this.src === imgStickyUnreadPosted) {
+				$(this).parents('tr').remove();
+			}
+		});
+	}
+	
 	if (document.URL.indexOf("viewtopic") !== -1) {
 	// We're in a thread.
 	
