@@ -38,6 +38,10 @@ with_jquery(function($) {
 	var imgStickyUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread_mine.png";
 	var imgStickyReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_read.png";
 	var imgStickyUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread.png";
+	var imgPollReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_read.png";
+	var imgPollUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_unread.png";
+	var imgPollReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_read_mine.png";
+	var imgPollUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_unread_mine.png";
 
 	function syncThreads () {
 		if (Array.isArray(threads)) {
@@ -60,7 +64,10 @@ with_jquery(function($) {
 		syncThreads();
 	}
 
+	// Initialize threads variable.
 	syncThreads();
+	
+	// Do stuff.
 	
 	if (document.URL.indexOf("viewforum") !== -1) {
 	// We're looking at a forum or forum group.
@@ -90,6 +97,14 @@ with_jquery(function($) {
 				this.src = imgStickyUnreadUnposted;
 			} else if (this.src === imgStickyUnreadUnposted) {
 				this.src = imgStickyUnreadPosted;
+			} else if (this.src === imgPollReadPosted) {
+				this.src = imgPollReadUnposted;
+			} else if (this.src === imgPollReadUnposted) {
+				this.src = imgPollReadPosted;
+			} else if (this.src === imgPollUnreadPosted) {
+				this.src = imgPollUnreadUnposted;
+			} else if (this.src === imgPollUnreadUnposted) {
+				this.src = imgPollUnreadPosted;
 			}
 		});
 	}
