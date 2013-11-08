@@ -4,7 +4,7 @@
 // @description    Whitelist/Blacklist posted-in threads to behave like you haven't posted in them.
 // @include        http://arstechnica.com/civis/*
 // @author         Elliott Wilcoxon
-// @require        http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.js
+// @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js
 // @grant          none
 
 // ==/UserScript==
@@ -30,18 +30,19 @@ with_jquery(function($) {
 		localStorage.removeItem(prefix + key);
 	}
 
-	var imgNormalReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_read.png";
-	var imgNormalUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_unread.png";
-	var imgNormalReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_read_mine.png";
-	var imgNormalUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/topic_unread_mine.png";
-	var imgStickyReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_read_mine.png";
-	var imgStickyUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread_mine.png";
-	var imgStickyReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_read.png";
-	var imgStickyUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/sticky_unread.png";
-	var imgPollReadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_read.png";
-	var imgPollUnreadUnposted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_unread.png";
-	var imgPollReadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_read_mine.png";
-	var imgPollUnreadPosted = "http://cdn.arstechnica.net/civis/ars/imageset/poll_unread_mine.png";
+	var imgPrefix = "http://cdn.arstechnica.net/civis/ars/imageset/"
+	var imgNormalReadUnposted 	= imgPrefix + "topic_read.png";
+	var imgNormalUnreadUnposted	= imgPrefix + "topic_unread.png";
+	var imgNormalReadPosted		= imgPrefix + "topic_read_mine.png";
+	var imgNormalUnreadPosted	= imgPrefix + "topic_unread_mine.png";
+	var imgStickyReadPosted		= imgPrefix + "sticky_read_mine.png";
+	var imgStickyUnreadPosted	= imgPrefix + "sticky_unread_mine.png";
+	var imgStickyReadUnposted	= imgPrefix + "sticky_read.png";
+	var imgStickyUnreadUnposted	= imgPrefix + "sticky_unread.png";
+	var imgPollReadUnposted		= imgPrefix + "poll_read.png";
+	var imgPollUnreadUnposted	= imgPrefix + "poll_unread.png";
+	var imgPollReadPosted		= imgPrefix + "poll_read_mine.png";
+	var imgPollUnreadPosted		= imgPrefix + "poll_unread_mine.png";
 
 	function syncThreads () {
 		if (Array.isArray(threads)) {
@@ -60,6 +61,8 @@ with_jquery(function($) {
 		} else {
 			threads.splice(threadIndex, 1);
 		}
+		
+		$(toggleLink).children().toggle();
 		
 		syncThreads();
 	}
@@ -130,7 +133,7 @@ with_jquery(function($) {
 		var toggleLink = document.createElement('a');
 
 		$(toggleLink).attr('href', 'javascript:void(0);')
-			.html('Toggle posted-in')
+			.html('<span style="" >Toggle participation</span><span style="display: none;" >Untoggle participation</span>')
 			.css({	display: 'block',
 					'padding-left': '21px',
 					background: 'url(http://cdn.arstechnica.net/civis/ars/imageset/en/_mark_read.png) no-repeat scroll left top transparent'
@@ -141,8 +144,13 @@ with_jquery(function($) {
 			.css({	float: 'left',
 					'margin-right': '1em'
 			})
-			.click(function () {toggleThread(document.URL)});
-
+			.click(function () {toggleThread(document.URL);});
+		
 		$('.subscribe-actions').append(toggleButton);
+		
+		var thread = /f=\d+&t=\d+/.exec(document.URL)[0];
+		if (threads.indexOf(thread) !== -1) {
+			$(toggleLink).children().toggle();
+		}
 	}
 });
