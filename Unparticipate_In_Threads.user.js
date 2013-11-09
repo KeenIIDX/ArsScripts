@@ -115,6 +115,14 @@ with_jquery(function($) {
 	if (document.URL.indexOf("egosearch") !== -1) {
 	// We're in My Threads.
 	
+		var toggleEgo = $('<a>').attr('href', 'javascript:void(0);')
+			.addClass('toggle')
+			.html('<img src="http://cdn.arstechnica.net/civis/ars/imageset/en/_mark_read.png">')
+			.css({ float: 'right' })
+			.click(function () {toggleThread($(this).siblings('.topictitle').attr('href'));
+								$(this).parents('tr').fadeOut('slow', function() {$(this).remove();});})
+			.appendTo('.topic-title');
+	
 		// Build selector that matches all the toggled threads.
 		var threadsSelector = "";
 		threads.forEach( function (item) {
@@ -129,17 +137,14 @@ with_jquery(function($) {
 	if (document.URL.indexOf("viewtopic") !== -1) {
 	// We're in a thread.
 	
-		var toggleButton = document.createElement('div');
-		var toggleLink = document.createElement('a');
-
-		$(toggleLink).attr('href', 'javascript:void(0);')
+		var toggleLink = $('<a>').attr('href', 'javascript:void(0);')
 			.html('<span style="" >Toggle participation</span><span style="display: none;" >Untoggle participation</span>')
 			.css({	display: 'block',
 					'padding-left': '21px',
 					background: 'url(http://cdn.arstechnica.net/civis/ars/imageset/en/_mark_read.png) no-repeat scroll left top transparent'
 		});
 		
-		$(toggleButton).append(toggleLink)
+		var toggleButton = $('<div>').append(toggleLink)
 			.addClass('toggle')
 			.css({	float: 'left',
 					'margin-right': '1em'
